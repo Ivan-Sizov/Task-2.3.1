@@ -1,6 +1,6 @@
 package web.models;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 
 @Entity
 @Table(name="users")
@@ -15,15 +15,6 @@ public class User {
     private String surname;
     @Column
     private int age;
-
-    private static int LAST_ID;
-
-    public User(String name, String surname, int age) {
-        this.id = ++LAST_ID;
-        this.name = name;
-        this.surname = surname;
-        this.age = age;
-    }
 
     public User() {}
 

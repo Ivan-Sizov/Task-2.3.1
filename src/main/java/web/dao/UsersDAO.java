@@ -1,50 +1,37 @@
 package web.dao;
 
 
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import web.models.User;
 
-import java.util.ArrayList;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.transaction.Transactional;
 import java.util.List;
 
-@Component
+@Service
+@Transactional
 public class UsersDAO {
-    private final List<User> usersList;
-
-    public UsersDAO() {
-        this.usersList = new ArrayList<>();
-        usersList.add(new User("Ivan", "Sizov", 30));
-        usersList.add(new User("Elena", "Smith", 35));
-        usersList.add(new User("John", "Doe", 83));
-    }
-
+    @PersistenceContext
+    private EntityManager entityManager;
+    @Transactional
     public User getUser(int id) {
-        return usersList.stream()
-                .filter(user -> user.getId() == id)
-                .findFirst()
-                .orElse(null);
+        return entityManager.find(User.class, id);
     }
-
+    @Transactional
     public void addUser(User user) {
-        usersList.add(new User(user.getName(), user.getSurname(), user.getAge()));
+        entityManager.persist(user);
     }
-
-    public void updateUser(int id, String name, String surname, int age) {
-        usersList.stream()
-                .filter(user -> user.getId() == id)
-                .findFirst()
-                .ifPresent(user -> {
-                    user.setName(name);
-                    user.setSurname(surname);
-                    user.setAge(age);
-                });
+    @Transactional
+    public void updateUser(User user) {
+        entityManager.merge(user);
     }
-
-    public void deleteUser(int id) {
-        usersList.removeIf(user -> user.getId() == id);
+    @Transactional
+    public void deleteUser(User user) {
+        entityManager.remove(user);
     }
-
+    @Transactional
     public List<User> getAllUsers() {
-        return usersList;
+        return entityManager.createQuery("SELECT u FROM User u", User.class).getResultList();
     }
 }

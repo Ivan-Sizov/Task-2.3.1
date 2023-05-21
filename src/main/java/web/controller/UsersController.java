@@ -7,9 +7,12 @@ import org.springframework.web.bind.annotation.*;
 import web.dao.UsersDAO;
 import web.models.User;
 
+import javax.transaction.Transactional;
+
 
 @Controller
 @RequestMapping("users")
+@Transactional
 public class UsersController {
     private final UsersDAO usersDAO;
 
@@ -36,10 +39,15 @@ public class UsersController {
     }
 
     @PatchMapping("/{id}")
-    public String editUser(@PathVariable("id") int id, @ModelAttribute("user") User user) {
-        usersDAO.updateUser(id, user.getName(), user.getSurname(), user.getAge());
+    public String editUser(@PathVariable("id") int id, @ModelAttribute("user") User updatedUser) {
+        User existingUser = usersDAO.getUser(id);
+        existingUser.setName(updatedUser.getName());
+        existingUser.setSurname(updatedUser.getSurname());
+        existingUser.setAge(updatedUser.getAge());
+        usersDAO.updateUser(existingUser);
         return "redirect:/users";
     }
+
 
     @PostMapping()
     public String addNewUser(@ModelAttribute("user") User user) {
@@ -49,7 +57,7 @@ public class UsersController {
 
     @DeleteMapping("/{id}")
     public String deleteUser(@PathVariable("id") int id) {
-        usersDAO.deleteUser(id);
+        usersDAO.deleteUser(usersDAO.getUser(id));
         return "redirect:/users";
     }
 }
