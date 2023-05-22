@@ -4,32 +4,29 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import web.dao.UsersDAOInterface;
 import web.models.User;
-
-import javax.transaction.Transactional;
+import web.service.UserService;
 
 
 @Controller
 @RequestMapping("users")
-@Transactional
-public class UsersController {
-    private final UsersDAOInterface usersDAO;
+public class UserController {
+    private final UserService userService;
 
     @Autowired
-    public UsersController(UsersDAOInterface usersDAO) {
-        this.usersDAO = usersDAO;
+    public UserController(UserService userService) {
+        this.userService = userService;
     }
 
     @GetMapping("")
     public String getAllUsers(Model model) {
-        model.addAttribute("users", usersDAO.getAllUsers());
+        model.addAttribute("users", userService.getAllUsers());
         return "users/allUsers";
     }
 
     @GetMapping("/{id}/edit")
     public String editUserPage(Model model, @PathVariable("id") int id) {
-        model.addAttribute("user", usersDAO.getUser(id));
+        model.addAttribute("user", userService.getUser(id));
         return "/users/editUser";
     }
 
@@ -40,24 +37,24 @@ public class UsersController {
 
     @PatchMapping("/{id}")
     public String editUser(@PathVariable("id") int id, @ModelAttribute("user") User updatedUser) {
-        User existingUser = usersDAO.getUser(id);
+        User existingUser = userService.getUser(id);
         existingUser.setName(updatedUser.getName());
         existingUser.setSurname(updatedUser.getSurname());
         existingUser.setAge(updatedUser.getAge());
-        usersDAO.updateUser(existingUser);
+        userService.updateUser(existingUser);
         return "redirect:/users";
     }
 
 
     @PostMapping()
     public String addNewUser(@ModelAttribute("user") User user) {
-        usersDAO.addUser(user);
+        userService.addUser(user);
         return "redirect:/users";
     }
 
     @DeleteMapping("/{id}")
     public String deleteUser(@PathVariable("id") int id) {
-        usersDAO.deleteUser(usersDAO.getUser(id));
+        userService.deleteUser(id);
         return "redirect:/users";
     }
 }

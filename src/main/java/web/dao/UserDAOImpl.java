@@ -4,7 +4,7 @@ import web.models.User;
 
 import java.util.List;
 
-public interface UsersDAOInterface {
+public interface UserDAOImpl {
     User getUser(int id);
 
     void addUser(User user);
