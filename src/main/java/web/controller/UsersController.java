@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import web.dao.UsersDAO;
+import web.dao.UsersDAOInterface;
 import web.models.User;
 
 import javax.transaction.Transactional;
@@ -14,10 +14,10 @@ import javax.transaction.Transactional;
 @RequestMapping("users")
 @Transactional
 public class UsersController {
-    private final UsersDAO usersDAO;
+    private final UsersDAOInterface usersDAO;
 
     @Autowired
-    public UsersController(UsersDAO usersDAO) {
+    public UsersController(UsersDAOInterface usersDAO) {
         this.usersDAO = usersDAO;
     }
 
